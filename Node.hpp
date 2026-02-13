@@ -22,12 +22,14 @@ private:
 public:
     NodeType nodeType;
     std::string contents;
+    unsigned int layer;
     std::vector<Node> children;
 
     Node() = default;
     Node(NodeType type);
     ~Node() = default;
     bool set_node_type(NodeType type);
+    bool set_node_layer(unsigned int l);
     bool set_node_contents(std::string c);
 
 };
@@ -38,6 +40,11 @@ inline Node::Node(NodeType type) {
 
 inline bool Node::set_node_type(NodeType type) {
     nodeType = type;
+    return true;
+}
+
+inline bool Node::set_node_layer(unsigned int l) {
+    layer = l;
     return true;
 }
 
