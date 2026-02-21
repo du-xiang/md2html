@@ -69,17 +69,25 @@ bool Parser::is_code_block(std::string& line, Node& n) {
         node.set_node_contents("codeBlock");
 
         std::string codeLine;
-        std::getline(m_file, codeLine);
-        while(codeLine.substr(0, 3) != "```" && !m_file.eof()) {
-            Node codeLineNode;
-            codeLineNode.set_node_layer(node.layer+1);
-            codeLineNode.set_node_type(NodeType::codeLine);
-            codeLineNode.set_node_contents("codeLine");
-            node.children.push_back(std::move(codeLineNode));
-            std::getline(m_file, codeLine);
+        bool endFlag = false;                   // 判断是否成功读取到了代码块末尾标志
+        while(std::getline(m_file, codeLine)) { 
+            if(codeLine.substr(0, 3) != "```") { 
+                Node codeLineNode;
+                codeLineNode.set_node_layer(node.layer+1);
+                codeLineNode.set_node_type(NodeType::codeLine);
+                codeLineNode.set_node_contents("codeLine");
+                node.children.push_back(std::move(codeLineNode));
+            } else { 
+                endFlag = true;
+                break;
+            }
         }
 
-        rootNode.children.push_back(std::move(node));
+        if(endFlag) { 
+            rootNode.children.push_back(std::move(node));
+        } else {
+            // todo：将代码块中的内容重新解析
+        }
     } else {
         is_paragraph(line, n);
     }
@@ -95,17 +103,25 @@ bool Parser::is_math_block(std::string& line, Node& n) {
         node.set_node_contents("mathBlock");
 
         std::string mathLine;
-        std::getline(m_file, mathLine);
-        while(mathLine.substr(0, 2) != "$$" && !m_file.eof()) { 
-            Node mathLineNode;
-            mathLineNode.set_node_layer(node.layer+1);
-            mathLineNode.set_node_type(NodeType::mathLine);
-            mathLineNode.set_node_contents("mathLine");
-            node.children.push_back(std::move(mathLineNode));
-            std::getline(m_file, mathLine);
+        bool endFlag = false;
+        while(std::getline(m_file, mathLine)) { 
+            if(mathLine.substr(0, 2) != "$$") { 
+                Node mathLineNode;
+                mathLineNode.set_node_layer(node.layer+1);
+                mathLineNode.set_node_type(NodeType::mathLine);
+                mathLineNode.set_node_contents("mathLine");
+                node.children.push_back(std::move(mathLineNode));
+            } else {
+                endFlag = true;
+                break;
+            }
         }
 
-        n.children.push_back(std::move(node));
+        if(endFlag) { 
+            n.children.push_back(std::move(node)); 
+        } else {
+            // tode：将数学块中的内容重新解析
+        }
     } else {
         is_paragraph(line, n);
     }
