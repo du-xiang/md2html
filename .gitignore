@@ -369,3 +369,6 @@ record.md
 
 # 忽略visual studio 相关文件
 .vs/
+
+# 忽略./build 文件夹
+build/
