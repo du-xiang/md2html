@@ -9,7 +9,7 @@ Node Parser::parsing() {
     while (std::getline(m_file, line))
     {   // 使用每行首字符对块类型进行初步筛查
         if(line.empty()) {
-            // 空行跳过
+            spaceLine = true;
         } else {
             switch(line[0]) {
                 case '#': is_header(line, rootNode); break;
@@ -22,6 +22,7 @@ Node Parser::parsing() {
                 case '$': is_math_block(line, rootNode); break;
                 default : is_paragraph(line, rootNode);
             }
+            spaceLine = false;
         }
     }
 
@@ -140,29 +141,35 @@ bool Parser::is_quota(std::string& line, Node& n) {
     }
     node.set_node_level(quotaCount);
     node.set_node_contents("quota/"+std::to_string(quotaCount));
-    std::cout<<"count: "<<quotaCount<<std::endl;
 
-    // 迭代判断Node的children末尾元素是否匹配
-    // 匹配则插入合适位置
-    // 不匹配则新建node
-    Node* tmpNode = &rootNode;
-    while(!(*tmpNode).children.empty()) {
-        if((*tmpNode).children.back().nodeType != NodeType::quote) {
-            (*tmpNode).children.push_back(std::move(node));
-            break;
-        } else if((*tmpNode).children.back().level > quotaCount) {
-            (*tmpNode).children.push_back(std::move(node));
-            break;
-        } else if((*tmpNode).children.back().level == quotaCount) {
-            // todo：添加进content中
-            break;
-        } else {
-            node.set_node_layer(node.layer+1);
-            tmpNode = &((*tmpNode).children.back());
+    // 判断上一行是否是空行
+    // 如果是空行则直接进行插入操作
+    if(spaceLine) {
+        node.set_node_layer(n.layer+1);
+        n.children.push_back(std::move(node));
+    } else {
+        // 迭代判断Node的children末尾元素是否匹配
+        // 匹配则插入合适位置
+        // 不匹配则新建node
+        Node* tmpNode = &rootNode;
+        while(!(*tmpNode).children.empty()) {
+            if((*tmpNode).children.back().nodeType != NodeType::quote) {
+                (*tmpNode).children.push_back(std::move(node));
+                break;
+            } else if((*tmpNode).children.back().level > quotaCount) {
+                (*tmpNode).children.push_back(std::move(node));
+                break;
+            } else if((*tmpNode).children.back().level == quotaCount) {
+                // todo：添加进content中
+                break;
+            } else {
+                node.set_node_layer(node.layer+1);
+                tmpNode = &((*tmpNode).children.back());
+            }
         }
-    }
-    if((*tmpNode).children.empty()) { 
-        (*tmpNode).children.push_back(std::move(node));
+        if((*tmpNode).children.empty()) { 
+            (*tmpNode).children.push_back(std::move(node));
+        }
     }
 
     return true;

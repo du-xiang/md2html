@@ -11,6 +11,7 @@ private:
 
 public:
     Node rootNode;
+    bool spaceLine;                 // 判断上一行是否是空行
 
     Parser() = delete;
     Parser(std::string mdFilename);
@@ -25,7 +26,7 @@ public:
 };
 
 
-inline Parser::Parser(std::string mdFilepath) {
+inline Parser::Parser(std::string mdFilepath): spaceLine(true) {
     m_file.open(mdFilepath);
     if(!m_file.is_open()) {
         throw std::runtime_error("Cannot open file: " + mdFilepath);
