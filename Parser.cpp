@@ -156,10 +156,7 @@ bool Parser::is_quota(std::string& line, Node& n) {
             if((*tmpNode).children.back().nodeType != NodeType::quote) {
                 (*tmpNode).children.push_back(std::move(node));
                 break;
-            } else if((*tmpNode).children.back().level > quotaCount) {
-                (*tmpNode).children.push_back(std::move(node));
-                break;
-            } else if((*tmpNode).children.back().level == quotaCount) {
+            } else if((*tmpNode).children.back().level >= quotaCount) {
                 // todo：添加进content中
                 break;
             } else {
