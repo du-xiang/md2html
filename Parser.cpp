@@ -13,10 +13,11 @@ Node Parser::parsing() {
         } else {
             switch(line[0]) {
                 case '#': is_header(line, rootNode); break;
-                case '-': ; break;
-                case '+': ; break;
-                case '1': ; break;
                 case '|': ; break;
+                case '1': ; break;
+                case '+': ; break;
+                case '-': ;
+                case '*': is_Horizontal_line(line, rootNode); break;
                 case '>': is_quota(line, rootNode); break;
                 case '`': is_code_block(line, rootNode); break;
                 case '$': is_math_block(line, rootNode); break;
@@ -157,6 +158,9 @@ bool Parser::is_quota(std::string& line, Node& n) {
                 (*tmpNode).children.push_back(std::move(node));
                 break;
             } else if((*tmpNode).children.back().level >= quotaCount) {
+                // 情况一：  情况二：
+                // >>>>      >>>
+                // >>        >>>
                 // todo：添加进content中
                 break;
             } else {
@@ -166,6 +170,32 @@ bool Parser::is_quota(std::string& line, Node& n) {
         }
         if((*tmpNode).children.empty()) { 
             (*tmpNode).children.push_back(std::move(node));
+        }
+    }
+
+    return true;
+}
+
+bool Parser::is_Horizontal_line(std::string& line, Node& n) {
+    // 以“-”、“*”开头的行可能为分隔符或无序列表或普通段落
+    bool isHL = true;                               // 判断是否是分隔符
+    for(int pos=1; pos<line.size(); pos++) {
+        if(line.at(pos) != line.at(0) && line.at(pos) != ' ') {
+            isHL = false;                           // 只要出现一个不是空格且不与开始字符相同
+        }                                           // 即不可能是分隔符
+    }
+
+    if(isHL) {
+        Node node;
+        node.set_node_layer(n.layer+1);
+        node.set_node_type(NodeType::horizontalLine);
+        node.set_node_contents("horizontalLine");
+        n.children.push_back(std::move(node));
+    } else {
+        if(line.at(1) == ' ') {
+            // 无序列表
+        } else {
+            // 以*开始的普通段落
         }
     }
 

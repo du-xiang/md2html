@@ -15,7 +15,7 @@ enum class NodeType {
     listContainer,  // 列表容器
     orderList,      // 有序列表
     unorderList,    // 无序列表
-    lineBreak,      // 分割线
+    horizontalLine, // 分割线
 };
 
 class Node {
