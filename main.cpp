@@ -2,7 +2,7 @@
 
 bool display(const Node& n) {
     for(size_t i=0; i<n.layer; i++) {
-        std::cout << '\t';
+        std::cout << "    ";
     }
     std::cout << '|' << n.contents;
     std::cout << std::endl;
