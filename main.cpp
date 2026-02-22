@@ -1,15 +1,15 @@
 #include "Parser.hpp"
 
-bool display(const Node& n) {
+bool display(const Node& n, int l) {
     for(size_t i=0; i<n.layer; i++) {
         std::cout << "    ";
     }
-    std::cout << '|' << n.contents;
+    std::cout << l << '|' << n.contents;
     std::cout << std::endl;
 
     if(!n.children.empty()) { 
         for(auto s=n.children.cbegin(); s!=n.children.cend(); s++) { 
-            display(*s);
+            display(*s, l+1);
         }
     }
 
@@ -24,7 +24,7 @@ int main() {
 
 	Parser parser(mdFilepath);
 	auto rootNode = parser.parsing();
-	display(rootNode);
+	display(rootNode, 1);
 
 	return 0;
 }
