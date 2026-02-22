@@ -129,6 +129,41 @@ bool Parser::is_math_block(std::string& line, Node& n) {
     return true;
 }
 
-bool Parser::is_quota(std::string& line, Node& n) {
+bool Parser::is_quota(std::string& line, Node& n) { 
+    Node node;
+    node.set_node_layer(n.layer+1);
+    node.set_node_type(NodeType::quote);
+
+    int quotaCount = 1;         // 统计有多少个引用字符
+    while(line[quotaCount] == '>') {
+        quotaCount++;
+    }
+    node.set_node_level(quotaCount);
+    node.set_node_contents("quota/"+std::to_string(quotaCount));
+    std::cout<<"count: "<<quotaCount<<std::endl;
+
+    // 迭代判断Node的children末尾元素是否匹配
+    // 匹配则插入合适位置
+    // 不匹配则新建node
+    Node* tmpNode = &rootNode;
+    while(!(*tmpNode).children.empty()) {
+        if((*tmpNode).children.back().nodeType != NodeType::quote) {
+            (*tmpNode).children.push_back(std::move(node));
+            break;
+        } else if((*tmpNode).children.back().level > quotaCount) {
+            (*tmpNode).children.push_back(std::move(node));
+            break;
+        } else if((*tmpNode).children.back().level == quotaCount) {
+            // todo：添加进content中
+            break;
+        } else {
+            node.set_node_layer(node.layer+1);
+            tmpNode = &((*tmpNode).children.back());
+        }
+    }
+    if((*tmpNode).children.empty()) { 
+        (*tmpNode).children.push_back(std::move(node));
+    }
+
     return true;
 }
