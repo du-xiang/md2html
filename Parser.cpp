@@ -31,13 +31,17 @@ Node Parser::parsing() {
 }
 
 bool Parser::is_paragraph(std::string& line, Node& n) {
-    Node node;
-
-    node.set_node_type(NodeType::paragraph);
-    node.set_node_layer(n.layer+1);
-    node.set_node_contents("paragraph");
-    // todo: 行内处理
-    rootNode.children.push_back(std::move(node));
+    if(spaceLine || 
+            (!n.children.empty() && n.children.back().nodeType != NodeType::paragraph)) {
+        Node node;
+        node.set_node_type(NodeType::paragraph);
+        node.set_node_layer(n.layer+1);
+        node.set_node_contents("paragraph");
+        // todo: 行内处理
+        rootNode.children.push_back(std::move(node));
+    } else {
+        // todo：添加进上一个paragraph Node结点
+    }
 
     return true;
 }
