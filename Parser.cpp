@@ -11,23 +11,28 @@ Node Parser::parsing() {
         if(line.empty()) {
             spaceLine = true;
         } else {
-            switch(line[0]) {
-                case '#': is_header(line, rootNode); break;
-                case '|': ; break;
-                case '1': ; break;
-                case '+': ; break;
-                case '-': ;
-                case '*': is_Horizontal_line(line, rootNode); break;
-                case '>': is_quota(line, rootNode); break;
-                case '`': is_code_block(line, rootNode); break;
-                case '$': is_math_block(line, rootNode); break;
-                default : is_paragraph(line, rootNode);
-            }
+            bolckSwitch(line, rootNode);
             spaceLine = false;
         }
     }
 
     return rootNode;
+}
+
+bool Parser::bolckSwitch(std::string& line, Node& n) {
+    switch(line[0]) {
+        case '#': is_header(line, rootNode); break;
+        case '|': ; break;
+        case '1': ; break;
+        case '+': ; break;
+        case '-': ;
+        case '*': is_Horizontal_line(line, rootNode); break;
+        case '>': is_quota(line, rootNode); break;
+        case '`': is_code_block(line, rootNode); break;
+        case '$': is_math_block(line, rootNode); break;
+        default : is_paragraph(line, rootNode);
+    }
+    return true;
 }
 
 bool Parser::is_paragraph(std::string& line, Node& n) {
