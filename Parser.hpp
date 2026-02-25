@@ -17,7 +17,7 @@ public:
     Parser(std::string mdFilename);
     ~Parser();
     Node parsing();
-    bool bolckSwitch(std::string& line, Node& n);
+    bool bolckSwitch(std::string& line, int& p, Node& n);
     bool is_paragraph(std::string& line, Node& n);
     bool is_header(std::string& line, Node& n);
     bool is_code_block(std::string& line, Node& n);

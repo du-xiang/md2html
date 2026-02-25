@@ -11,7 +11,12 @@ Node Parser::parsing() {
         if(line.empty()) {
             spaceLine = true;
         } else {
-            bolckSwitch(line, rootNode);
+            int spaceCount = 0;         // 判断第一个非空格字符起始位置，也可视为空格数统计
+            while(line[spaceCount] == ' ') {
+                spaceCount++;
+            }
+
+            bolckSwitch(line, spaceCount, rootNode);
             spaceLine = false;
         }
     }
@@ -19,8 +24,8 @@ Node Parser::parsing() {
     return rootNode;
 }
 
-bool Parser::bolckSwitch(std::string& line, Node& n) {
-    switch(line[0]) {
+bool Parser::bolckSwitch(std::string& line, int& p, Node& n) {
+    switch(line[p]) {
         case '#': is_header(line, rootNode); break;
         case '|': ; break;
         case '1': ; break;
