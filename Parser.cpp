@@ -7,17 +7,18 @@ Node Parser::parsing() {
 
     std::string line;
     while (std::getline(m_file, line))
-    {   // 使用每行首字符对块类型进行初步筛查
+    {   // 使用每行首个非空字符对块类型进行初步筛查
         if(line.empty()) {
             spaceLine = true;
         } else {
-            int spaceCount = 0;         // 判断第一个非空格字符起始位置，也可视为空格数统计
-            while(line[spaceCount] == ' ') {
-                spaceCount++;
+            int spaceCount = line.find_first_not_of(" ");   // 判断第一个非空格字符起始位置，也可视为空格数统计
+            if(spaceCount == std::string::npos) {
+                // 全是空格，视为空行
+                spaceLine = true;
+            } else {
+                bolckSwitch(line, spaceCount, rootNode);
+                spaceLine = false;
             }
-
-            bolckSwitch(line, spaceCount, rootNode);
-            spaceLine = false;
         }
     }
 
@@ -150,9 +151,17 @@ bool Parser::is_quota(std::string& line, Node& n) {
     node.set_node_layer(n.layer+1);
     node.set_node_type(NodeType::quote);
 
-    int quotaCount = 1;         // 统计有多少个引用字符
-    while(line[quotaCount] == '>') {
-        quotaCount++;
+    int quotaCount = 0;                             // 统计有多少个引用字符
+    int pos = 0;
+    while(pos < line.size()) {
+        if(line.at(pos) == '>') {
+            quotaCount++;
+            pos++;
+        } else if(line.at(pos) == ' ') {
+            pos++;
+        } else {
+            break;
+        }
     }
     node.set_node_level(quotaCount);
     node.set_node_contents("quota/"+std::to_string(quotaCount));
