@@ -81,7 +81,7 @@ bool Parser::is_header(std::string& line, size_t& p, Node& n) {
 bool Parser::is_code_block(std::string& line, size_t& p, Node& n) {
     std::vector<std::string> progLang = {"cpp","python","java"};
 
-    if(line.substr(p, 3) == "```") {
+    if(line.find_first_of("```", p) == p) {
         Node node;
         node.set_node_layer(n.layer+1);
         node.set_node_type(NodeType::codeBlock);
@@ -117,7 +117,7 @@ bool Parser::is_code_block(std::string& line, size_t& p, Node& n) {
 }
 
 bool Parser::is_math_block(std::string& line, size_t& p, Node& n) {
-    if(line.substr(0, 2) == "$$") { 
+    if(line.find_first_of("$$", p) == p) { 
         Node node;
         node.set_node_layer(n.layer+1);
         node.set_node_type(NodeType::mathBlock);
@@ -126,7 +126,9 @@ bool Parser::is_math_block(std::string& line, size_t& p, Node& n) {
         std::string mathLine;
         bool endFlag = false;
         while(std::getline(m_file, mathLine)) { 
-            if(mathLine.substr(0, 2) != "$$") { 
+            size_t posNotSpace = mathLine.find_first_not_of(' ');
+            if(posNotSpace == std::string::npos || 
+                    mathLine.find_first_of("$$", posNotSpace) == posNotSpace) {
                 Node mathLineNode;
                 mathLineNode.set_node_layer(node.layer+1);
                 mathLineNode.set_node_type(NodeType::mathLine);
