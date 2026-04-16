@@ -56,6 +56,10 @@ printf("helloworld");
 scanf("%d",&a);
 ```
 
+  ```python
+print("helloworld)
+```
+
 $$
 /delta + /beta
 /beta + /delta

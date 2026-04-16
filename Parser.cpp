@@ -81,7 +81,7 @@ bool Parser::is_header(std::string& line, size_t& p, Node& n) {
 bool Parser::is_code_block(std::string& line, size_t& p, Node& n) {
     std::vector<std::string> progLang = {"cpp","python","java"};
 
-    if(line.substr(0, 3) == "```") {
+    if(line.substr(p, 3) == "```") {
         Node node;
         node.set_node_layer(n.layer+1);
         node.set_node_type(NodeType::codeBlock);
@@ -90,13 +90,15 @@ bool Parser::is_code_block(std::string& line, size_t& p, Node& n) {
         std::string codeLine;
         bool endFlag = false;                   // 判断是否成功读取到了代码块末尾标志
         while(std::getline(m_file, codeLine)) { 
-            if(codeLine.substr(0, 3) != "```") { 
+            size_t posNotSpace = codeLine.find_first_not_of(" ");
+            if(posNotSpace == std::string::npos || 
+                    codeLine.find_first_of("```", posNotSpace) == posNotSpace) {
                 Node codeLineNode;
                 codeLineNode.set_node_layer(node.layer+1);
                 codeLineNode.set_node_type(NodeType::codeLine);
                 codeLineNode.set_node_contents("codeLine");
                 node.children.push_back(std::move(codeLineNode));
-            } else { 
+            } else {
                 endFlag = true;
                 break;
             }
