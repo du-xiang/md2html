@@ -60,16 +60,18 @@ bool Parser::is_paragraph(std::string& line, Node& n) {
 bool Parser::is_header(std::string& line, size_t& p, Node& n) {
     Node node;
     node.set_node_layer(n.layer+1);
-    size_t pos = line.find(' ');
 
-    std::string prefix(pos, '#');
-    if(line.substr(0, pos) == prefix) {
+    size_t level = 1;
+    while(line.at(++p) == '#') {
+        ++level;
+    }
+    if(line.at(p) == ' ') {         // 连续#后为空格，视为标题结点插入
         node.set_node_type(NodeType::header);
-        node.set_node_level(pos);
-        node.set_node_contents("header/"+std::to_string(pos));
+        node.set_node_level(level);
+        node.set_node_contents("header/"+std::to_string(level));
         // todo: 行内处理
         n.children.push_back(std::move(node));
-    } else {
+    } else {                        // 连续#后不为空格，视为普通段落处理
         is_paragraph(line, n);
     }
 
