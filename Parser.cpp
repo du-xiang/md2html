@@ -11,7 +11,7 @@ Node Parser::parsing() {
         if(line.empty()) {
             spaceLine = true;
         } else {
-            int spaceCount = line.find_first_not_of(" ");   // 判断第一个非空格字符起始位置，也可视为空格数统计
+            size_t spaceCount = line.find_first_not_of(" ");   // 判断第一个非空格字符起始位置，也可视为空格数统计
             if(spaceCount == std::string::npos) {
                 // 全是空格，视为空行
                 spaceLine = true;
@@ -25,17 +25,17 @@ Node Parser::parsing() {
     return rootNode;
 }
 
-bool Parser::bolckSwitch(std::string& line, int& p, Node& n) {
+bool Parser::bolckSwitch(std::string& line, size_t& p, Node& n) {
     switch(line[p]) {
-        case '#': is_header(line, rootNode); break;
+        case '#': is_header(line, p, rootNode); break;
         case '|': ; break;
         case '1': ; break;
         case '+': ; break;
         case '-': ;
-        case '*': is_Horizontal_line(line, rootNode); break;
-        case '>': is_quota(line, rootNode); break;
-        case '`': is_code_block(line, rootNode); break;
-        case '$': is_math_block(line, rootNode); break;
+        case '*': is_Horizontal_line(line, p, rootNode); break;
+        case '>': is_quota(line, p, rootNode); break;
+        case '`': is_code_block(line, p, rootNode); break;
+        case '$': is_math_block(line, p, rootNode); break;
         default : is_paragraph(line, rootNode);
     }
     return true;
@@ -57,7 +57,7 @@ bool Parser::is_paragraph(std::string& line, Node& n) {
     return true;
 }
 
-bool Parser::is_header(std::string& line, Node& n) {
+bool Parser::is_header(std::string& line, size_t& p, Node& n) {
     Node node;
     node.set_node_layer(n.layer+1);
     size_t pos = line.find(' ');
@@ -76,7 +76,7 @@ bool Parser::is_header(std::string& line, Node& n) {
     return true;
 }
 
-bool Parser::is_code_block(std::string& line, Node& n) {
+bool Parser::is_code_block(std::string& line, size_t& p, Node& n) {
     std::vector<std::string> progLang = {"cpp","python","java"};
 
     if(line.substr(0, 3) == "```") {
@@ -112,7 +112,7 @@ bool Parser::is_code_block(std::string& line, Node& n) {
     return true;
 }
 
-bool Parser::is_math_block(std::string& line, Node& n) {
+bool Parser::is_math_block(std::string& line, size_t& p, Node& n) {
     if(line.substr(0, 2) == "$$") { 
         Node node;
         node.set_node_layer(n.layer+1);
@@ -146,7 +146,7 @@ bool Parser::is_math_block(std::string& line, Node& n) {
     return true;
 }
 
-bool Parser::is_quota(std::string& line, Node& n) { 
+bool Parser::is_quota(std::string& line, size_t& p, Node& n) { 
     Node node;
     node.set_node_layer(n.layer+1);
     node.set_node_type(NodeType::quote);
@@ -199,7 +199,7 @@ bool Parser::is_quota(std::string& line, Node& n) {
     return true;
 }
 
-bool Parser::is_Horizontal_line(std::string& line, Node& n) {
+bool Parser::is_Horizontal_line(std::string& line, size_t& p, Node& n) {
     // 以“-”、“*”开头的行可能为分隔符或无序列表或普通段落
     bool isHL = true;                               // 判断是否是分隔符
     for(int pos=1; pos<line.size(); pos++) {

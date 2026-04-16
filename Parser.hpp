@@ -17,13 +17,13 @@ public:
     Parser(std::string mdFilename);
     ~Parser();
     Node parsing();
-    bool bolckSwitch(std::string& line, int& p, Node& n);
+    bool bolckSwitch(std::string& line, size_t& p, Node& n);
     bool is_paragraph(std::string& line, Node& n);
-    bool is_header(std::string& line, Node& n);
-    bool is_code_block(std::string& line, Node& n);
-    bool is_math_block(std::string& line, Node& n);
-    bool is_quota(std::string& line, Node& n);
-    bool is_Horizontal_line(std::string& line, Node& n);
+    bool is_header(std::string& line, size_t& p, Node& n);
+    bool is_code_block(std::string& line, size_t& p, Node& n);
+    bool is_math_block(std::string& line, size_t& p, Node& n);
+    bool is_quota(std::string& line, size_t& p, Node& n);
+    bool is_Horizontal_line(std::string& line, size_t& p, Node& n);
 
 };
 

@@ -20,12 +20,11 @@ enum class NodeType {
 
 class Node {
 private:
-
 public:
     NodeType nodeType;          // 结点类型
     std::string contents;       // 结点包含的文本内容
-    size_t layer;         // 结点在解析树中的层数（从0开始）
-    size_t level;         // 存放标题、列表、引用的层级
+    size_t layer;               // 结点在解析树中的层数（从0开始）
+    size_t level;               // 存放标题、列表、引用的层级
     std::vector<Node> children; // 存放此结点包含的下层子结点
 
     Node() = default;
