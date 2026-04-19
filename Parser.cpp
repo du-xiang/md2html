@@ -208,23 +208,26 @@ bool Parser::is_quota(std::string& line, size_t& p, Node& n) {
 bool Parser::is_Horizontal_line(std::string& line, size_t& p, Node& n) {
     // 以“-”、“*”开头的行可能为分隔符或无序列表或普通段落
     bool isHL = true;                               // 判断是否是分隔符
-    for(int pos=1; pos<line.size(); pos++) {
-        if(line.at(pos) != line.at(0) && line.at(pos) != ' ') {
+    size_t count = 0;
+    for(int pos=p; pos<line.size(); pos++) {
+        if(line.at(pos) != line.at(p) && line.at(pos) != ' ') {
             isHL = false;                           // 只要出现一个不是空格且不与开始字符相同
-        }                                           // 即不可能是分隔符
+        } else {                                    // 即不可能是分隔符
+            ++count;
+        }
     }
 
-    if(isHL) {
+    if(isHL && count>=3 ) {
         Node node;
         node.set_node_layer(n.layer+1);
         node.set_node_type(NodeType::horizontalLine);
         node.set_node_contents("horizontalLine");
         n.children.push_back(std::move(node));
     } else {
-        if(line.at(1) == ' ') {
-            // 无序列表
+        if(line.at(p+1) == ' ') {
+            // 无序列表或待办列表
         } else {
-            // 以*开始的普通段落
+            // 以*或-开始的普通段落
         }
     }
 
