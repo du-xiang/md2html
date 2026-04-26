@@ -156,7 +156,6 @@ bool Parser::is_quota(std::string& line, size_t& p, Node& n) {
     Node node;
     node.set_node_layer(n.layer+1);
     node.set_node_type(NodeType::quote);
-    std::cout<<line<<std::endl;
 
     int quotaCount = 0;                             // 统计有多少个引用字符
     int pos = p;
